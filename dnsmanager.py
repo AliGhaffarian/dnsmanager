@@ -31,7 +31,19 @@ def dns_action(ip : str, action : str):
 
     return error_code
     
+
+def delete_server(name : str)->bool:
+    if load_server(name) is None:
+        logger.error(f"{name} doesn't exist")
+        return False
+    SERVERS.pop(name)
     
+    
+    json_object = json.dumps(SERVERS)
+    open(SERVERS_JSON_PATH, "w").write(json_object)
+
+    return True
+
 def init_conf_files():
     
     error_code = os.system("sudo mkdir /etc/dnsmanager")
@@ -168,6 +180,7 @@ def handle_args():
     parser.add_argument("-a", "--add_server", help="store the server", action="store_true")
     parser.add_argument("-l", "--list", help="print all servers", action="store_true")
     parser.add_argument("-n", "--name", help="name of the server for the -a/--add_server switch")
+    parser.add_argument("-r","--remove", help="remove a stored server", action="store_true")
 
     if len(sys.argv) == 1:
         parser.print_help()
@@ -204,12 +217,20 @@ if __name__ == "__main__":
             exit(1)
     
     if CONFIG.add_server:
-        if CONFIG.name is None:
+        if CONFIG.server is None:
             logger.error("no name provided")
             exit(1)
         logger.debug(f"called save_server args : {CONFIG.server}, {CONFIG.name}")
 
         save_server(CONFIG.server, CONFIG.name)
         exit(0)
+
+    if CONFIG.remove:
+        if CONFIG.server is None:
+            logger.error("no name provided")
+            exit(1)
+        delete_server(CONFIG.server[0])
+        exit(0)
+
     logger.debug(f"resolv_action with {CONFIG}")
     resolve_action() 
