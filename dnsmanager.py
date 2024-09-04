@@ -168,14 +168,20 @@ def resolve_action()->bool:
 
 def handle_args():
     
-    parser = argparse.ArgumentParser(epilog=textwrap.dedent("""\
-            examples :
-                        dnsmanager -s 8.8.8.8 : set the current dns server to 8.8.8.8
-                        dnsmanager -s 8.8.8.8,8.4.4.8 : set the primary dns server to 8.8.8.8 and the secondary to 8.4.4.8
-                        note : you can as many secondary dns servers as you want
-                        dnsmanager -a -s 8.8.8.8,8.4.4.8 -n google.com : store a dns server with name google.com and ips of 8.8.8.8 and 8.4.4.8
-                        dnsmanager -s google.com : try to set a stored dns server named google.com"""))
+    usage_help="""\
+examples :
+            dnsmanager -s 8.8.8.8 : set the current dns server to 8.8.8.8
+            dnsmanager -s 8.8.8.8,8.4.4.8 : set the primary dns server to 8.8.8.8 and the secondary to 8.4.4.8
+            note : you can as many secondary dns servers as you want
+            dnsmanager -a -s 8.8.8.8,8.4.4.8 -n google.com : store a dns server with name google.com and ips of 8.8.8.8 and 8.4.4.8
+            dnsmanager -s google.com : try to set a stored dns server named google.com"""
+    parser = argparse.ArgumentParser(
+            description="simple dns changer",
+            epilog=usage_help,
+            formatter_class=argparse.RawTextHelpFormatter
+            )
     parser.add_argument("-d","--debug", help="debug logging", action="store_true", default=False)
+
     parser.add_argument("-s", "--server", help="ip of a server of name of one previously stored if is a list of ips intended for -a/--add_server switch ips need to be separated by commas",  type=str)
     parser.add_argument("-a", "--add_server", help="store the server", action="store_true")
     parser.add_argument("-l", "--list", help="print all servers", action="store_true")
